@@ -1,0 +1,15 @@
+{
+  "name": "surveys-app",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Samuel Rodríguez",
+  "license": "ISC",
+  "description": "App where users can create and vote surveys",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
