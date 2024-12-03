@@ -2,11 +2,11 @@ import Joi from "joi";
 import { pool } from "../db/pool.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { generateError } from "../utils/generate-error.js";
 
-const JWT_SECRET =
-  "d9895b139e673fa54b74d233376b526eb60590783144f4d73821ebcb95b73b51";
+const { JWT_SECRET } = process.env;
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const loginSchema = Joi.object({
       email: Joi.string().email().min(5).max(150).required(),
@@ -20,13 +20,13 @@ const login = async (req, res) => {
     ]);
 
     if (!user) {
-      throw new Error("No existe ningún usuario con ese email");
+      throw generateError("No existe ningún usuario con ese email", 400);
     }
 
     const isPasswordOk = await bcrypt.compare(req.body.password, user.password);
 
     if (!isPasswordOk) {
-      throw new Error("La contraseña es incorrecta");
+      throw generateError("La contraseña es incorrecta", 400);
     }
 
     const payload = {
@@ -37,8 +37,7 @@ const login = async (req, res) => {
 
     res.send({ data: { token } });
   } catch (error) {
-    console.error(error);
-    res.status(400).send({ message: error.message });
+    next(error);
   }
 };
 
